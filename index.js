@@ -1,4 +1,14 @@
-function formatDate(dates) {
+let apiKey = "5779b9efe682cbd7772ff1fe36bcdf5f";
+let units = "metric";
+let apiEndpoint = "https://api.openweathermap.org/data/2.5/weather";
+let apiEndpointForcast = "https://api.openweathermap.org/data/2.5/onecall";
+
+function getIcon(iconId) {
+    return `http://openweathermap.org/img/wn/${iconId}@2x.png`;
+}
+
+function getDisplayDate() {
+    let now = new Date();
     let date = now.getDate();
     let hours = now.getHours();
     if (hours < 10) {
@@ -16,7 +26,7 @@ function formatDate(dates) {
         "Wednesday",
         "Thursday",
         "Friday",
-        "Saturday"
+        "Saturday",
     ];
     let day = days[now.getDay()];
     let months = [
@@ -31,94 +41,141 @@ function formatDate(dates) {
         "Sep",
         "Oct",
         "Nov",
-        "Dec"
+        "Dec",
     ];
     let month = months[now.getMonth()];
     return `${day}  ${date} ${month} ${year} , ${hours}:${minutes}`;
 }
 
-let now = new Date();
-let currentTime = document.querySelector("#time");
+function convertCelsiusToFahrenheit(inputCelsius) {
+    // (5°C × 9/5) + 32 = 41°F
+    const fahrenheit = inputCelsius * (9 / 5) + 32;
 
-currentTime.innerHTML = formatDate(currentTime);
-function displayForecast(response) {
-    let forecastElement = document.querySelector("#forecast");
-    forecastElement.innerHTML = null;
-    let forecast = null;
-    console.log(forecast);
+    return fahrenheit.toFixed();
+}
 
-    for (let index = 0; index < 6; index++) {
-        forecast = response.data.list[index];
-        forecastElement.innerHTML += `
-    <div class="row">
-    <div class="col-sm-4">
-    ${formatHours(forecast.dt * 1000)}
+function displayData(response) {
+    let iconId = response.weather[0].icon;
+    let tempC = response.main.temp;
+    let tempF = convertCelsiusToFahrenheit(tempC);
+    let humidity = response.main.humidity;
+    let wind = response.wind.speed;
+    let city = response.name;
+
+    iconDisplay.innerHTML = `<img src="${getIcon(iconId)}" alt="icon"/>`;
+    cityDisplay.innerText = city;
+    tempDisplay.innerText = `${tempC}°C / ${tempF}°F`;
+    windDisplay.innerText = `Wind speed: ${wind}`;
+    humidityDisplay.innerText = `Humidity: ${humidity}`;
+    timeDisplay.innerText = getDisplayDate();
+}
+
+function weekDay(index) {
+    let days = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+    ];
+
+    return days[index];
+}
+
+function weekDayDate(index) {
+    let now = new Date();
+    now.setDate(now.getDate() + index + 1);
+    let months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    ];
+    let month = months[now.getMonth()];
+    let dayDate = now.getDate();
+    return `${month} ${dayDate}`;
+}
+
+const form = document.getElementById("form");
+const cityInput = document.querySelector("#city-input");
+const searchButton = document.querySelector("#search-btn");
+const currentLocationButton = document.querySelector("#current-location");
+const iconDisplay = document.getElementById("icon");
+const cityDisplay = document.getElementById("city");
+const tempDisplay = document.getElementById("temp");
+const timeDisplay = document.getElementById("time");
+const windDisplay = document.getElementById("wind");
+const humidityDisplay = document.getElementById("humidity");
+const forecastContainer = document.getElementById("forcast-container");
+
+currentLocationButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    // navigator.geolocation.getCurrentPosition(function (position) {
+    //   let lat = position.coords.latitude;
+    //   let lon = position.coords.longitude;
+
+    //   // ...
+    // });
+    let lat = 50.8503;
+    let lon = 4.3517;
+
+    fetch(`${apiEndpoint}?lat=${lat}&lon=${lon}&appid=${apiKey}&units=${units}`)
+        .then((r) => r.json())
+        .then(displayData)
+        .then(() =>
+            fetch(
+                `${apiEndpointForcast}?lat=${lat}&lon=${lon}&exclude=current,hourly,minutely&appid=${apiKey}&units=${units}`
+            )
+        )
+        .then((r) => r.json())
+        .then((res) => {
+            let daysTemp = res.daily;
+            let elements = "";
+
+            daysTemp.slice(0, 5).forEach(function (dailyTemp, index) {
+                let iconId = dailyTemp.weather[0].icon;
+                let tempMin = dailyTemp.temp.min;
+                let tempMax = dailyTemp.temp.max;
+
+                let el = `
+        <div class="col-sm">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">${weekDay(index)}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">${weekDayDate(
+                    index
+                )}</h6>
+              <p class="card-text">
+                ${tempMin.toFixed()}°C - ${tempMax.toFixed()}°C
+                <img src="${getIcon(iconId)}" alt="icon" class="icon-image"/>
+              </p>
+            </div>
+          </div>
         </div>
-    <div class="col-sm-4">
-        <img src="http://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png" id="icons">
-    </div>
-    <div class="col-sm-4">
-        <div class="temp">
-            <strong>${Math.round(forecast.main.temp_max)}°C</strong> | ${Math.round(forecast.main.temp_min)}°C
-        </div>
+        `;
 
-function searchCity(event) {
-    event.preventDefault();
-    let searchInput = document.querySelector("#city-input");
-    let apiKey = "5779b9efe682cbd7772ff1fe36bcdf5f";
-    let units = "metric";
-    let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${searchInput.value}&appid=${apiKey}&units=${units}`;
-        let h1 = document.querySelector("#city-input");
-        h1.innerHTML = `${searchInput.value}`;
-        fetch(apiUrl)
-            .then((r) => r.json())
-            .then(showTemperature);
-    }
+                elements = elements + el;
+                forecastContainer.innerHTML = elements;
+            });
+        });
+});
 
-    let form = document.querySelector("#form");
+searchButton.addEventListener("click", function (e) {
+    e.preventDefault();
 
-    form.addEventListener("submit", searchCity);
+    let city = cityInput.value;
 
-    function showTemperature(response) {
-        console.log("res", response);
-        if (response.cod < 200 || response.cod >= 300) {
-            alert("No city found");
-        } else {
-            let cityEl = document.getElementById("city");
-            let tempEl = document.getElementById("temp");
-            cityEl.innerText = response.name;
-            let temperature = Math.round(response.main.temp);
-            tempEl.innerText = temperature;
-            let humidityEL = document.querySelector("#humidity")
-            humidityEl.innerHTML = `Humidity: ${response.data.main.humidity}%`;
-            let windEl = document.querySelector("#wind")
-            windEl.innerHTML = `Wind: ${response.data.wind.speed} km/h`;
-
-        }
-    }
-
-    function showCurrentLocationTemperature(response) {
-        let temp = Math.round(response.data.main.temp);
-        let currentLocationTemperature = document.querySelector("#temperature");
-        let currentLocation = document.querySelector("#city");
-        currentLocationTemperature.innerHTML = temp;
-        currentLocation.innerHTML = response.data.name;
-
-    }
-    function showPosition(position) {
-        let latitude = position.coords.latitude;
-        let longitude = position.coords.longitude;
-        let apiKey = "5779b9efe682cbd7772ff1fe36bcdf5f";
-        let units = "metric";
-        let apiEndpoint = "https://api.openweathermap.org/data/2.5/weather";
-        let apiLocationUrl = `${apiEndpoint}?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=${units}`;
-        fetch(apiLocationUrl)
-            .then((r) => r.json())
-            .then(showCurrentLocationTemperature);
-    }
-
-    function getCurrentPosition() {
-        navigator.geolocation.getCurrentPosition(showPosition);
-    }
-    let button = document.querySelector("#btn-current");
-    button.addEventListener("click", getCurrentPosition);}
+    fetch(`${apiEndpoint}?q=${city}&appid=${apiKey}&units=${units}`)
+        .then((r) => r.json())
+        .then(displayData);
+});
