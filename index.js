@@ -106,26 +106,26 @@ function weekDayDate(index) {
     return `${month} ${dayDate}`;
 }
 
-const form = document.getElementById("form");
-const cityInput = document.querySelector("#city-input");
-const searchButton = document.querySelector("#search-btn");
-const currentLocationButton = document.querySelector("#current-location");
-const iconDisplay = document.getElementById("icon");
-const cityDisplay = document.getElementById("city");
-const tempDisplay = document.getElementById("temp");
-const timeDisplay = document.getElementById("time");
-const windDisplay = document.getElementById("wind");
-const humidityDisplay = document.getElementById("humidity");
-const forecastContainer = document.getElementById("forcast-container");
+let form = document.getElementById("form");
+let cityInput = document.querySelector("#city-input");
+let searchButton = document.querySelector("#search-btn");
+let currentLocationButton = document.querySelector("#current-location");
+let iconDisplay = document.getElementById("icon");
+let cityDisplay = document.getElementById("city");
+let tempDisplay = document.getElementById("temp");
+let timeDisplay = document.getElementById("time");
+let windDisplay = document.getElementById("wind");
+let humidityDisplay = document.getElementById("humidity");
+let forecastContainer = document.getElementById("forcast-container");
 
 currentLocationButton.addEventListener("click", function (e) {
     e.preventDefault();
-    // navigator.geolocation.getCurrentPosition(function (position) {
-    //   let lat = position.coords.latitude;
-    //   let lon = position.coords.longitude;
+    navigator.geolocation.getCurrentPosition(function (position) {
+        let lat = position.coords.latitude;
+        let lon = position.coords.longitude;
 
-    //   // ...
-    // });
+
+    });
     let lat = 50.8503;
     let lon = 4.3517;
 
