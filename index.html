@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Wheather-project</title>
+    <title>Weather-project3</title>
     <meta charset="UTF-8" />
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -15,9 +15,12 @@
 
     <div class="box">
         <div class="top p-4">
-            <p id=humidity>
-                Humidity:32% <br></p>
-            <p id=wind> Wind:45km/h</p>
+            <p class="weather-info">
+                Humidity: <span id="humidity"></span>
+                <br />
+                Wind Speed: <span id="wind"></span>
+            </p>
+
             <form class="form-search" id="form">
                 <input class="form-control" type="text" placeholder="City" id="city-input" />
                 <input class="btn btn-primary" type="submit" value="Search" />
@@ -27,7 +30,7 @@
                 <p id="city">Paris</p>
                 <div>
                     <i class="fas fa-cloud-sun-rain fa-3x"></i>
-                    <span id="temp">18°C / 42°F</span>
+                    <span id="temp">11°C / 42°F</span>
                     <span id="time"></span>
                 </div>
             </div>
@@ -42,7 +45,7 @@
                                 <h5 class="card-title">Monday</h5>
                                 <h6 class="card-subtitle mb-2 text-muted">Jan 21</h6>
                                 <p class="card-text">
-                                    9°C - 18°C <i class="fas fa-cloud-sun-rain"></i>
+                                    9°C - 11°C <i class="fas fa-cloud-sun-rain"></i>
                                 </p>
                             </div>
                         </div>
@@ -53,7 +56,7 @@
                                 <h5 class="card-title">Tuesday</h5>
                                 <h6 class="card-subtitle mb-2 text-muted">Jan 22</h6>
                                 <p class="card-text">
-                                    9°C - 18°C <i class="fas fa-cloud-sun-rain"></i>
+                                    9°C - 11°C <i class="fas fa-cloud-sun-rain"></i>
                                 </p>
                             </div>
                         </div>
@@ -64,7 +67,7 @@
                                 <h5 class="card-title">Wednesday</h5>
                                 <h6 class="card-subtitle mb-2 text-muted">Jan 23</h6>
                                 <p class="card-text">
-                                    9°C - 18°C <i class="fas fa-cloud-sun-rain"></i>
+                                    9°C - 11°C <i class="fas fa-cloud-sun-rain"></i>
                                 </p>
                             </div>
                         </div>
@@ -75,7 +78,7 @@
                                 <h5 class="card-title">Thursday</h5>
                                 <h6 class="card-subtitle mb-2 text-muted">Jan 24</h6>
                                 <p class="card-text">
-                                    9°C - 18°C <i class="fas fa-cloud-sun-rain"></i>
+                                    9°C - 11°C <i class="fas fa-cloud-sun-rain"></i>
                                 </p>
                             </div>
                         </div>
@@ -86,7 +89,7 @@
                                 <h5 class="card-title">Friday</h5>
                                 <h6 class="card-subtitle mb-2 text-muted">Jan 25</h6>
                                 <p class="card-text">
-                                    9°C - 18°C <i class="fas fa-cloud-sun-rain"></i>
+                                    9°C - 11°C <i class="fas fa-cloud-sun-rain"></i>
                                 </p>
 
                             </div>

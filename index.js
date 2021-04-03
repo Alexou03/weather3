@@ -41,6 +41,26 @@ let now = new Date();
 let currentTime = document.querySelector("#time");
 
 currentTime.innerHTML = formatDate(currentTime);
+function displayForecast(response) {
+    let forecastElement = document.querySelector("#forecast");
+    forecastElement.innerHTML = null;
+    let forecast = null;
+    console.log(forecast);
+
+    for (let index = 0; index < 6; index++) {
+        forecast = response.data.list[index];
+        forecastElement.innerHTML += `
+    <div class="row">
+    <div class="col-sm-4">
+    ${formatHours(forecast.dt * 1000)}
+        </div>
+    <div class="col-sm-4">
+        <img src="http://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png" id="icons">
+    </div>
+    <div class="col-sm-4">
+        <div class="temp">
+            <strong>${Math.round(forecast.main.temp_max)}°C</strong> | ${Math.round(forecast.main.temp_min)}°C
+        </div>
 
 function searchCity(event) {
     event.preventDefault();
@@ -48,55 +68,57 @@ function searchCity(event) {
     let apiKey = "5779b9efe682cbd7772ff1fe36bcdf5f";
     let units = "metric";
     let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${searchInput.value}&appid=${apiKey}&units=${units}`;
-    let h1 = document.querySelector("#city-input");
-    h1.innerHTML = `${searchInput.value}`;
-    fetch(apiUrl)
-        .then((r) => r.json())
-        .then(showTemperature);
-}
-
-let form = document.querySelector("#form");
-
-form.addEventListener("submit", searchCity);
-
-function showTemperature(response) {
-    console.log("res", response);
-    if (response.cod < 200 || response.cod >= 300) {
-        alert("No city found");
-    } else {
-        let cityEl = document.getElementById("city");
-        let tempEl = document.getElementById("temp");
-        cityEl.innerText = response.name;
-        let temperature = Math.round(response.main.temp);
-        tempEl.innerText = temperature;
-        let humidity = response.data.main.humidity;
-        let humidityDates = document.querySelector("#humidity");
-        let wind = document.querySelector("#wind");
-        let windSpeed = Math.round(3.6 * response.data.wind.speed);
+        let h1 = document.querySelector("#city-input");
+        h1.innerHTML = `${searchInput.value}`;
+        fetch(apiUrl)
+            .then((r) => r.json())
+            .then(showTemperature);
     }
-}
 
-function showCurrentLocationTemperature(response) {
-    let temp = Math.round(response.data.main.temp);
-    let currentLocationTemperature = document.querySelector("#temperature");
-    let currentLocation = document.querySelector("#city");
-    currentLocationTemperature.innerHTML = temp;
-    currentLocation.innerHTML = response.data.name;
-}
-function showPosition(position) {
-    let latitude = position.coords.latitude;
-    let longitude = position.coords.longitude;
-    let apiKey = "5779b9efe682cbd7772ff1fe36bcdf5f";
-    let units = "metric";
-    let apiEndpoint = "https://api.openweathermap.org/data/2.5/weather";
-    let apiLocationUrl = `${apiEndpoint}?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=${units}`;
-    fetch(apiLocationUrl)
-        .then((r) => r.json())
-        .then(showCurrentLocationTemperature);
-}
+    let form = document.querySelector("#form");
 
-function getCurrentPosition() {
-    navigator.geolocation.getCurrentPosition(showPosition);
-}
-let button = document.querySelector("#btn-current");
-button.addEventListener("click", getCurrentPosition);
+    form.addEventListener("submit", searchCity);
+
+    function showTemperature(response) {
+        console.log("res", response);
+        if (response.cod < 200 || response.cod >= 300) {
+            alert("No city found");
+        } else {
+            let cityEl = document.getElementById("city");
+            let tempEl = document.getElementById("temp");
+            cityEl.innerText = response.name;
+            let temperature = Math.round(response.main.temp);
+            tempEl.innerText = temperature;
+            let humidityEL = document.querySelector("#humidity")
+            humidityEl.innerHTML = `Humidity: ${response.data.main.humidity}%`;
+            let windEl = document.querySelector("#wind")
+            windEl.innerHTML = `Wind: ${response.data.wind.speed} km/h`;
+
+        }
+    }
+
+    function showCurrentLocationTemperature(response) {
+        let temp = Math.round(response.data.main.temp);
+        let currentLocationTemperature = document.querySelector("#temperature");
+        let currentLocation = document.querySelector("#city");
+        currentLocationTemperature.innerHTML = temp;
+        currentLocation.innerHTML = response.data.name;
+
+    }
+    function showPosition(position) {
+        let latitude = position.coords.latitude;
+        let longitude = position.coords.longitude;
+        let apiKey = "5779b9efe682cbd7772ff1fe36bcdf5f";
+        let units = "metric";
+        let apiEndpoint = "https://api.openweathermap.org/data/2.5/weather";
+        let apiLocationUrl = `${apiEndpoint}?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=${units}`;
+        fetch(apiLocationUrl)
+            .then((r) => r.json())
+            .then(showCurrentLocationTemperature);
+    }
+
+    function getCurrentPosition() {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    }
+    let button = document.querySelector("#btn-current");
+    button.addEventListener("click", getCurrentPosition);}
